@@ -3,9 +3,8 @@ using System.Reflection;
 using UnityEngine;
 
 [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-public class PrebuildGetComponentAttribute : PropertyAttribute, IPrebuildGetComponent
+public class OnBuildGetComponentAttribute : PropertyAttribute, IPrebuildGetComponent
 {
-    
     public void Apply(FieldInfo _info,Component _component, GameObject _content)
     {
         _info.SetValue(_component,_content.GetComponent(_info.FieldType));

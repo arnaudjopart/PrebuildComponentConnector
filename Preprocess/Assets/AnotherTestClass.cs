@@ -1,19 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AnotherTestClass : MonoBehaviour
 {
-    [PrebuildGetComponent] [SerializeField] Rigidbody m_rigidbody;
+    [OnBuildGetComponent] Rigidbody m_rigidbody;
     // Start is called before the first frame update
     void Start()
     {
-        
+        Debug.Log("AnotherTestClass: "+m_rigidbody.mass);
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }

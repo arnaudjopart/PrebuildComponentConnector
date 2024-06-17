@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace CustomAttributes
 {
-    [CustomPropertyDrawer(typeof(PrebuildGetComponentAttribute))]
+    [CustomPropertyDrawer(typeof(OnBuildGetComponentAttribute))]
     public class PrebuildGetComponentPropertyDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

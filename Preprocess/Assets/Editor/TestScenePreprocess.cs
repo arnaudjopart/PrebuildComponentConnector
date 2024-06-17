@@ -1,7 +1,5 @@
-using System.Linq;
+using System;
 using System.Reflection;
-using CustomAttributes;
-using Editor;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -11,88 +9,44 @@ using UnityEngine.SceneManagement;
 public class TestScenePreprocess : IProcessSceneWithReport
 {
 
-    public int callbackOrder { get; }
+    public int callbackOrder { get { return 0; } }
     public void OnProcessScene(Scene scene, BuildReport report)
     {
+        Debug.Log("MyCustomBuildProcessor.OnProcessScene " + scene.name);
         //if (BuildPipeline.isBuildingPlayer) return;
-        var camera = GameObject.FindWithTag("MainCamera");
+        var rootsObjects = scene.GetRootGameObjects();
+        foreach (var rootObject in rootsObjects)
+        {
+            InjectComponent(rootObject);
+        }
+    }
 
-        var components = camera.GetComponents(typeof(Component));
+    private static void InjectComponent(GameObject _object)
+    {
+        var components = _object.GetComponents(typeof(Component));
         //Go through every component of this GameObject
         foreach (var component in components)
         {
+            
             //Filter Monobehaviour and Component
             //Debug.Log(component.GetType().FullName);
-            var isMono = component is MonoBehaviour;
-            if (isMono)
+            if (component is not MonoBehaviour) continue;
+            //Retrieve private fields of the class
+            var fieldInfos = component.GetType().GetFields(BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.Public);
+            foreach (var fieldInfo in fieldInfos)
             {
-                //Get component, based on component type
-                //var test = camera.GetComponent(component.GetType());
-                
-                Debug.Log(component.GetType().FullName +"? "+isMono);
-
-                //Retrieve private fields of the class
-                var result = component.GetType().GetFields(BindingFlags.NonPublic|BindingFlags.Instance);
-                foreach (var fieldInfo in result)
+                //Check if field has the custom attribute
+                var customAttributes = fieldInfo.GetCustomAttributes(typeof(IPrebuildGetComponent), true);
+                foreach (IPrebuildGetComponent connector in customAttributes)
                 {
-                    //Check if private field has the custom attribute
-                    var results = fieldInfo.GetCustomAttributes(typeof(IPrebuildGetComponent), true);
-                    foreach (IPrebuildGetComponent connector in results)
-                    {
-                        connector.Apply(fieldInfo,component,camera);
-                    }
-                    //if results.lenght<0, that means it does not have the attribute
-                    //if (results.Length <= 0) continue;
-                    //Debug.Log(fieldInfo.FieldType);
-
-                    //fieldInfo.SetValue(component,camera.GetComponent(fieldInfo.FieldType));
-                     
+                    connector.Apply(fieldInfo,component,_object);
                 }
-                
-                /*
-                SerializedProperty prop = serObj.GetIterator();
-                //SerializedObject serObj = new SerializedObject(test);
-                while (prop.NextVisible(true))
-                {
-
-                    if (prop.type.Contains("Rigidbody"))
-                    {
-                        var name = "Rigidbody";
-                        prop.objectReferenceValue = camera.GetComponent(name);
-                        serObj.ApplyModifiedProperties();
-                
-
-                    }
-                    //Debug.Log(prop.name);
-            
-           
-            
-                }*/
-                
             }
-            
         }
-        
-        /*
-        var script = camera.GetComponent<TestClass>( );
-        SerializedObject serObj = new SerializedObject(script);
-        SerializedProperty prop = serObj.GetIterator();
-       
-        while (prop.NextVisible(true))
-        {
-            Debug.Log(prop.type);
-            if (prop.type.Contains("Rigidbody"))
-            {
-                var name = "Rigidbody";
-                prop.objectReferenceValue = camera.GetComponent(name);
-                serObj.ApplyModifiedProperties();
-                
 
-            }
-            Debug.Log(prop.name);
-            
-           
-            
-        }*/
+        foreach (Transform childTransform in _object.transform)
+        {
+            InjectComponent(childTransform.gameObject);
+        }
     }
 }
