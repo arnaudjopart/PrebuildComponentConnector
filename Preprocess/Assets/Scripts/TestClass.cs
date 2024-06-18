@@ -13,8 +13,8 @@ public class TestClass : MonoBehaviour
     [CustomReadOnly]
     public int m_value = 10;
 
-    [OnBuildGetComponent] [SerializeField] private Rigidbody m_rigidbody;
-    [OnBuildGetComponent] private AnotherTestClass m_class;
+    [OnBuildGetComponent][HideInInspector, SerializeField] Rigidbody m_rigidbody;
+    [OnBuildGetComponent][HideInInspector, SerializeField] AnotherTestClass m_class;
 
     [SerializeField] private TMP_Text m_text;
     

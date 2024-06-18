@@ -453,6 +453,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_value: 10
+  m_rigidbody: {fileID: 0}
   m_text: {fileID: 1723025497}
 --- !u!1 &1299251222
 GameObject:

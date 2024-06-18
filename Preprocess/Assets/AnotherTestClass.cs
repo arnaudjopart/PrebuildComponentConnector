@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class AnotherTestClass : MonoBehaviour
 {
-    [OnBuildGetComponent] [SerializeField] Rigidbody m_rigidbody;
+    [OnBuildGetComponent] [HideInInspector, SerializeField] Rigidbody m_rigidbody;
     // Start is called before the first frame update
     void Start()
     {
