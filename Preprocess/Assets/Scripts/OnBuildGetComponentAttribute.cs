@@ -9,6 +9,7 @@ public class OnBuildGetComponentAttribute : PropertyAttribute, IPrebuildGetCompo
     {
         _info.SetValue(_component,_content.GetComponent(_info.FieldType));
         Debug.Log(_content.name+" got component connected in PreBuild Process: "+_info.FieldType);
+        //Debug.Log((_content.GetComponent(_info.FieldType) as Rigidbody).mass);
     }
 }
 

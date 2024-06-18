@@ -21,7 +21,7 @@ public class TestScenePreprocess : IProcessSceneWithReport
         }
     }
 
-    private static void InjectComponent(GameObject _object)
+    public static void InjectComponent(GameObject _object)
     {
         var components = _object.GetComponents(typeof(Component));
         //Go through every component of this GameObject
